@@ -1,0 +1,8 @@
+<!-- multi="true" allows the user to have multiple tabs open at once, if left out, only one will be open at a time-->
+<mat-accordion class="my-3 d-block" multi="true" *ngIf="posts.length > 0">
+  <mat-expansion-panel   *ngFor="let post of posts">
+    <mat-expansion-panel-header>{{post.title}}</mat-expansion-panel-header>
+    <p>{{post.content}}</p>
+  </mat-expansion-panel>
+</mat-accordion>
+<p class="text-center" *ngIf="posts.length == 0">No posts added yet</p>
