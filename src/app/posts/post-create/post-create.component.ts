@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component } from "@angular/core";
+import { NgForm } from "@angular/forms";
+import { PostsService } from "../posts.service";
 
 @Component({
   selector: 'app-post-create',
@@ -7,16 +9,15 @@ import { Component, EventEmitter, Output } from "@angular/core";
 })
 
 export class PostCreateComponent {
-  enteredContent = '';
-  enteredTitle = '';
-  @Output() postCreated = new EventEmitter();
 
-  onAddPost() {
-    const post = {
-      title: this.enteredTitle,
-      content: this.enteredContent
-    };
-    this.postCreated.emit(post);
+  constructor(public postsService: PostsService) {}
+
+  onAddPost(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+    this.postsService.addPost(form.value.title, form.value.content)
+    // clears the form information and validations on submit after the data is used and no longer needed
+    form.resetForm();
   }
-
 }
