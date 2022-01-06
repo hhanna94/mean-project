@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { map, Subject } from "rxjs";
 import { Post } from "./post.model";
 
@@ -8,7 +9,7 @@ export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPosts() {
     this.http.get<any>('http://localhost:3000/api/posts')
@@ -48,6 +49,8 @@ export class PostsService {
         this.posts.push(post);
         // Update the DOM with the updated post list
         this.postsUpdated.next([...this.posts]);
+        // Redirect to the post list
+        this.router.navigate(['/'])
       })
   }
 
@@ -61,6 +64,8 @@ export class PostsService {
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
+        // Redirect to the post list
+        this.router.navigate(['/'])
       })
   }
 
