@@ -32,10 +32,26 @@ const storage = multer.diskStorage({
   }
 });
 
-// Get all posts
+// Get paginated posts or all posts, depending on query parameters
 router.get('', (req, res, next) => {
-  Post.find()
-    .then(posts => res.status(200).json(posts))
+  // Get the query parameters from the URL, converting them to numbers in the process
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery
+      // Skip n items because depending on the page, we want to skipp all of the items that come before the page we are on
+      .skip(pageSize * (currentPage - 1))
+      // Only return how many items we want based on the pageSize variable
+      .limit(pageSize)
+  }
+  postQuery
+    .then(posts => {
+      fetchedPosts = posts;
+      return Post.count();
+    })
+    .then(count => res.status(200).json({posts: fetchedPosts, maxPosts: count}));
 })
 
 // Get a post by ID
