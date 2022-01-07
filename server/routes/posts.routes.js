@@ -73,7 +73,8 @@ router.post('', checkAuth, multer({storage: storage}).single("image"), (req, res
   const post = new Post ({
     title: req.body.title,
     content: req.body.content,
-    imagePath: url + "/images/" + req.file.filename
+    imagePath: url + "/images/" + req.file.filename,
+    creator: req.userData.userId
   });
   post.save()
     .then( savedPost => {
@@ -91,19 +92,35 @@ router.put('/:id', checkAuth, multer({storage: storage}).single("image"), (req, 
     const url = req.protocol + '://' + req.get("host");
     imagePath = url + "/images/" + req.file.filename;
   }
-  const post = new Post({_id: req.body.id, title: req.body.title, content: req.body.content, imagePath: imagePath})
-  console.log(post);
-  Post.updateOne({_id: req.params.id}, post)
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content,
+    imagePath: imagePath,
+    creator: req.userData.userId
+  })
+
+  // Only update a post if the id of the post matches, and if the logged in user is the creator of the post.
+  Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post)
     .then(result => {
-      res.status(200).json({message: "Post update successful."});
+      if (result.modifiedCount > 0) {
+        res.status(200).json({message: "Post update successful."});
+      } else {
+        res.status(401).json({message: "Not authorized to perform this operation."})
+      }
     })
 })
 
 // Delete a post
 router.delete("/:id", checkAuth, (req, res, next) => {
-  Post.deleteOne({_id: req.params.id})
+  Post.deleteOne({_id: req.params.id, creator: req.userData.userId})
     .then(result => {
-      res.status(200).json({message: "Post deleted."});
+      console.log(result);
+      if (result.deletedCount > 0) {
+        res.status(200).json({message: "Post deleted."});
+      } else {
+        res.status(401).json({message: "Not authorized to perform this authorization."})
+      }
     })
     .catch(err => console.log(err))
 })
