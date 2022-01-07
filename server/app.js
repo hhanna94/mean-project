@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require("path");
 
 const postsRoutes =  require("./routes/posts")
 
@@ -14,11 +15,15 @@ mongoose.connect("mongodb+srv://admin:mdzq326iBRK9pvJ@cluster0.fcumg.mongodb.net
 // Middleware for parsing JSON data
 app.use(bodyParser.json());
 
+// Middleware to make images folder statically accessible (allow users to access the images folder)
+app.use("/images", express.static(path.join("server/images")));
+
 // Middleware to set the response header to allow any origin to request data. Also allows the request to have the following headers (although it does not need them). Also allows the request to use the following methods
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
   res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+
   next();
 });
 
