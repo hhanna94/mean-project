@@ -2,13 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require("path");
+require('dotenv').config();
+
+const secretPassword = process.env.MONGO_PASSWORD;
 
 const postsRoutes =  require("./routes/posts")
 
 const app = express();
 
 // Connect to the MongoDB Cloud Server
-mongoose.connect("mongodb+srv://admin:mdzq326iBRK9pvJ@cluster0.fcumg.mongodb.net/mean-project?retryWrites=true&w=majority")
+mongoose.connect(`mongodb+srv://admin:${secretPassword}@cluster0.fcumg.mongodb.net/mean-project?retryWrites=true&w=majority`)
   .then(() => console.log("Connected to database"))
   .catch(() => console.log("Connection to database failed."));
 
