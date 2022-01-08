@@ -51,7 +51,8 @@ router.get('', (req, res, next) => {
       fetchedPosts = posts;
       return Post.count();
     })
-    .then(count => res.status(200).json({posts: fetchedPosts, maxPosts: count}));
+    .then(count => res.status(200).json({posts: fetchedPosts, maxPosts: count}))
+    .catch( () => res.status(500).json({message: "Fetching posts failed."}))
 })
 
 // Get a post by ID
@@ -64,6 +65,7 @@ router.get('/:id', (req, res, next) => {
         res.status(404).json({message: "Post not found."});
       }
     })
+    .catch( () => res.status(500).json({message: "Fetching post failed."}))
 })
 
 // Create a post
@@ -83,6 +85,7 @@ router.post('', checkAuth, multer({storage: storage}).single("image"), (req, res
         id: savedPost._id
       }});
     })
+    .catch( () => res.status(500).json({message: "Creating a post failed."}))
 })
 
 // Update a post
@@ -109,6 +112,7 @@ router.put('/:id', checkAuth, multer({storage: storage}).single("image"), (req, 
         res.status(401).json({message: "Not authorized to perform this operation."})
       }
     })
+    .catch( () => res.status(500).json({message: "Couldn't update post."}))
 })
 
 // Delete a post
@@ -119,10 +123,10 @@ router.delete("/:id", checkAuth, (req, res, next) => {
       if (result.deletedCount > 0) {
         res.status(200).json({message: "Post deleted."});
       } else {
-        res.status(401).json({message: "Not authorized to perform this authorization."})
+        res.status(401).json({message: "Not authorized to perform this operation."})
       }
     })
-    .catch(err => console.log(err))
+    .catch( () => res.status(500).json({message: "Failed to delete post."}))
 })
 
 module.exports = router;

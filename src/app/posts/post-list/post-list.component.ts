@@ -50,7 +50,9 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.postsService.deletePost(postId).subscribe( () => {
         this.postsService.getPosts(this.postsPerPage, this.currentPage);
-      });
+      },
+      // If any errors, we don't want the infinite loading circle so set loading back to false.
+      () => this.isLoading=false);
   }
 
   onChangedPage(pageData: PageEvent) {

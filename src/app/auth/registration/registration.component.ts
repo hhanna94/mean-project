@@ -17,7 +17,6 @@ export class RegistrationComponent implements OnInit {
 
   onRegister(form: NgForm) {
     if (form.invalid) return;
-
-    this.authService.createUser(form.value)
+    this.authService.createUser(form.value);
   }
 }
