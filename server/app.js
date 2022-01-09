@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const path = require("path");
 require('dotenv').config();
 
-const secretPassword = process.env.MONGO_PASSWORD;
+const secretPassword = process.env.MONGO_ATLAS_PW;
 
 const postsRoutes =  require("./routes/posts.routes")
 const usersRoutes =  require("./routes/users.routes")
